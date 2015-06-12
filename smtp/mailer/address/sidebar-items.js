@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Address","Contains an address with an optionnal alias"]],"trait":[["ToAddress","Converts an adress or an address with an alias to an `Address`"]]});

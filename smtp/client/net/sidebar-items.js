@@ -1,0 +1,1 @@
+initSidebarItems({"trait":[["Connector","A trait for the concept of opening a stream"]],"type":[["SmtpStream","Represents an atual SMTP network stream"]]});

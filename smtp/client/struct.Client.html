@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `Client` struct in crate `smtp`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, Client">
+
+    <title>smtp::client::Client - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../../main.css">
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <section class="sidebar">
+        
+        <p class='location'><a href='../index.html'>smtp</a>::<wbr><a href='index.html'>client</a></p><script>window.sidebarCurrent = {name: 'Client', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </section>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press 'S' to search, '?' for more options..."
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content struct">
+<h1 class='fqn'><span class='in-band'>Struct <a href='../index.html'>smtp</a>::<wbr><a href='index.html'>client</a>::<wbr><a class='struct' href=''>Client</a></span><span class='out-of-band'><span id='render-detail'>
+            <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                [<span class='inner'>&#x2212;</span>]
+            </a>
+        </span><a id='src-830' class='srclink' href='../../src/smtp/client/mod.rs.html#45-52' title='goto source code'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct Client&lt;S: <a class='trait' href='http://doc.rust-lang.org/nightly/std/io/trait.Write.html' title='std::io::Write'>Write</a> + <a class='trait' href='http://doc.rust-lang.org/nightly/std/io/trait.Read.html' title='std::io::Read'>Read</a> = <a class='type' href='../../smtp/client/net/type.SmtpStream.html' title='smtp::client::net::SmtpStream'>SmtpStream</a>&gt; {
+    // some fields omitted
+}</pre><div class='docblock'><p>Structure that implements the SMTP client</p>
+</div><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl&lt;S: <a class='trait' href='http://doc.rust-lang.org/nightly/std/io/trait.Write.html' title='std::io::Write'>Write</a> + <a class='trait' href='http://doc.rust-lang.org/nightly/std/io/trait.Read.html' title='std::io::Read'>Read</a> = <a class='type' href='../../smtp/client/net/type.SmtpStream.html' title='smtp::client::net::SmtpStream'>SmtpStream</a>&gt; <a class='struct' href='../../smtp/client/struct.Client.html' title='smtp::client::Client'>Client</a>&lt;S&gt;</code></h3><div class='impl-items'><h4 id='method.new' class='method'><code>fn <a href='#method.new' class='fnname'>new</a>&lt;A: <a class='trait' href='http://doc.rust-lang.org/nightly/std/net/addr/trait.ToSocketAddrs.html' title='std::net::addr::ToSocketAddrs'>ToSocketAddrs</a>&gt;(addr: A) -&gt; <a class='struct' href='../../smtp/client/struct.Client.html' title='smtp::client::Client'>Client</a>&lt;S&gt;</code></h4>
+<div class='docblock'><p>Creates a new SMTP client</p>
+
+<p>It does not connects to the server, but only creates the <code>Client</code></p>
+</div></div><h3 class='impl'><code>impl&lt;S: <a class='trait' href='../../smtp/client/net/trait.Connector.html' title='smtp::client::net::Connector'>Connector</a> + <a class='trait' href='http://doc.rust-lang.org/nightly/std/io/trait.Write.html' title='std::io::Write'>Write</a> + <a class='trait' href='http://doc.rust-lang.org/nightly/std/io/trait.Read.html' title='std::io::Read'>Read</a> = <a class='type' href='../../smtp/client/net/type.SmtpStream.html' title='smtp::client::net::SmtpStream'>SmtpStream</a>&gt; <a class='struct' href='../../smtp/client/struct.Client.html' title='smtp::client::Client'>Client</a>&lt;S&gt;</code></h3><div class='impl-items'><h4 id='method.close' class='method'><code>fn <a href='#method.close' class='fnname'>close</a>(&amp;mut self)</code></h4>
+<div class='docblock'><p>Closes the SMTP transaction if possible</p>
+</div><h4 id='method.connect' class='method'><code>fn <a href='#method.connect' class='fnname'>connect</a>(&amp;mut self) -&gt; <a class='type' href='../../smtp/error/type.SmtpResult.html' title='smtp::error::SmtpResult'>SmtpResult</a></code></h4>
+<div class='docblock'><p>Connects to the configured server</p>
+</div><h4 id='method.is_connected' class='method'><code>fn <a href='#method.is_connected' class='fnname'>is_connected</a>(&amp;mut self) -&gt; <a href='http://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h4>
+<div class='docblock'><p>Checks if the server is connected using the NOOP SMTP command</p>
+</div><h4 id='method.command' class='method'><code>fn <a href='#method.command' class='fnname'>command</a>(&amp;mut self, command: &amp;<a href='http://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='type' href='../../smtp/error/type.SmtpResult.html' title='smtp::error::SmtpResult'>SmtpResult</a></code></h4>
+<div class='docblock'><p>Sends an SMTP command</p>
+</div><h4 id='method.helo' class='method'><code>fn <a href='#method.helo' class='fnname'>helo</a>(&amp;mut self, hostname: &amp;<a href='http://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='type' href='../../smtp/error/type.SmtpResult.html' title='smtp::error::SmtpResult'>SmtpResult</a></code></h4>
+<div class='docblock'><p>Send a HELO command and fills <code>server_info</code></p>
+</div><h4 id='method.ehlo' class='method'><code>fn <a href='#method.ehlo' class='fnname'>ehlo</a>(&amp;mut self, hostname: &amp;<a href='http://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='type' href='../../smtp/error/type.SmtpResult.html' title='smtp::error::SmtpResult'>SmtpResult</a></code></h4>
+<div class='docblock'><p>Sends a EHLO command and fills <code>server_info</code></p>
+</div><h4 id='method.mail' class='method'><code>fn <a href='#method.mail' class='fnname'>mail</a>(&amp;mut self, address: &amp;<a href='http://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>, options: <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;&amp;<a href='http://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>&gt;) -&gt; <a class='type' href='../../smtp/error/type.SmtpResult.html' title='smtp::error::SmtpResult'>SmtpResult</a></code></h4>
+<div class='docblock'><p>Sends a MAIL command</p>
+</div><h4 id='method.rcpt' class='method'><code>fn <a href='#method.rcpt' class='fnname'>rcpt</a>(&amp;mut self, address: &amp;<a href='http://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='type' href='../../smtp/error/type.SmtpResult.html' title='smtp::error::SmtpResult'>SmtpResult</a></code></h4>
+<div class='docblock'><p>Sends a RCPT command</p>
+</div><h4 id='method.data' class='method'><code>fn <a href='#method.data' class='fnname'>data</a>(&amp;mut self) -&gt; <a class='type' href='../../smtp/error/type.SmtpResult.html' title='smtp::error::SmtpResult'>SmtpResult</a></code></h4>
+<div class='docblock'><p>Sends a DATA command</p>
+</div><h4 id='method.quit' class='method'><code>fn <a href='#method.quit' class='fnname'>quit</a>(&amp;mut self) -&gt; <a class='type' href='../../smtp/error/type.SmtpResult.html' title='smtp::error::SmtpResult'>SmtpResult</a></code></h4>
+<div class='docblock'><p>Sends a QUIT command</p>
+</div><h4 id='method.noop' class='method'><code>fn <a href='#method.noop' class='fnname'>noop</a>(&amp;mut self) -&gt; <a class='type' href='../../smtp/error/type.SmtpResult.html' title='smtp::error::SmtpResult'>SmtpResult</a></code></h4>
+<div class='docblock'><p>Sends a NOOP command</p>
+</div><h4 id='method.help' class='method'><code>fn <a href='#method.help' class='fnname'>help</a>(&amp;mut self, argument: <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;&amp;<a href='http://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>&gt;) -&gt; <a class='type' href='../../smtp/error/type.SmtpResult.html' title='smtp::error::SmtpResult'>SmtpResult</a></code></h4>
+<div class='docblock'><p>Sends a HELP command</p>
+</div><h4 id='method.vrfy' class='method'><code>fn <a href='#method.vrfy' class='fnname'>vrfy</a>(&amp;mut self, address: &amp;<a href='http://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='type' href='../../smtp/error/type.SmtpResult.html' title='smtp::error::SmtpResult'>SmtpResult</a></code></h4>
+<div class='docblock'><p>Sends a VRFY command</p>
+</div><h4 id='method.expn' class='method'><code>fn <a href='#method.expn' class='fnname'>expn</a>(&amp;mut self, address: &amp;<a href='http://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='type' href='../../smtp/error/type.SmtpResult.html' title='smtp::error::SmtpResult'>SmtpResult</a></code></h4>
+<div class='docblock'><p>Sends a EXPN command</p>
+</div><h4 id='method.rset' class='method'><code>fn <a href='#method.rset' class='fnname'>rset</a>(&amp;mut self) -&gt; <a class='type' href='../../smtp/error/type.SmtpResult.html' title='smtp::error::SmtpResult'>SmtpResult</a></code></h4>
+<div class='docblock'><p>Sends a RSET command</p>
+</div><h4 id='method.auth_plain' class='method'><code>fn <a href='#method.auth_plain' class='fnname'>auth_plain</a>(&amp;mut self, username: &amp;<a href='http://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>, password: &amp;<a href='http://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='type' href='../../smtp/error/type.SmtpResult.html' title='smtp::error::SmtpResult'>SmtpResult</a></code></h4>
+<div class='docblock'><p>Sends an AUTH command with PLAIN mecanism</p>
+</div><h4 id='method.auth_cram_md5' class='method'><code>fn <a href='#method.auth_cram_md5' class='fnname'>auth_cram_md5</a>(&amp;mut self, username: &amp;<a href='http://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>, password: &amp;<a href='http://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='type' href='../../smtp/error/type.SmtpResult.html' title='smtp::error::SmtpResult'>SmtpResult</a></code></h4>
+<div class='docblock'><p>Sends an AUTH command with CRAM-MD5 mecanism</p>
+</div><h4 id='method.message' class='method'><code>fn <a href='#method.message' class='fnname'>message</a>(&amp;mut self, message_content: &amp;<a href='http://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='type' href='../../smtp/error/type.SmtpResult.html' title='smtp::error::SmtpResult'>SmtpResult</a></code></h4>
+<div class='docblock'><p>Sends the message content</p>
+</div></div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <div id="help" class="hidden">
+        <div class="shortcuts">
+            <h1>Keyboard shortcuts</h1>
+            <dl>
+                <dt>?</dt>
+                <dd>Show this help dialog</dd>
+                <dt>S</dt>
+                <dd>Focus the search field</dd>
+                <dt>&larrb;</dt>
+                <dd>Move up in search results</dd>
+                <dt>&rarrb;</dt>
+                <dd>Move down in search results</dd>
+                <dt>&#9166;</dt>
+                <dd>Go to active search result</dd>
+            </dl>
+        </div>
+        <div class="infos">
+            <h1>Search tricks</h1>
+            <p>
+                Prefix searches with a type followed by a colon (e.g.
+                <code>fn:</code>) to restrict the search to a given type.
+            </p>
+            <p>
+                Accepted types are: <code>fn</code>, <code>mod</code>,
+                <code>struct</code>, <code>enum</code>,
+                <code>trait</code>, <code>typedef</code> (or
+                <code>tdef</code>).
+            </p>
+            <p>
+                Search functions by type signature (e.g.
+                <code>vec -> usize</code>)
+            </p>
+        </div>
+    </div>
+
+    
+
+    <script>
+        window.rootPath = "../../";
+        window.currentCrate = "smtp";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../../jquery.js"></script>
+    <script src="../../main.js"></script>
+    
+    <script async src="../../search-index.js"></script>
+</body>
+</html>

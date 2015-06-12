@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `smtp` crate.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, smtp">
+
+    <title>smtp - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../main.css">
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <section class="sidebar">
+        
+        <p class='location'></p><script>window.sidebarCurrent = {name: 'smtp', ty: 'mod', relpath: '../'};</script>
+    </section>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press 'S' to search, '?' for more options..."
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content mod">
+<h1 class='fqn'><span class='in-band'>Crate <a class='mod' href=''>smtp</a></span><span class='out-of-band'><span id='render-detail'>
+            <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                [<span class='inner'>&#x2212;</span>]
+            </a>
+        </span><a id='src-0' class='srclink' href='../src/smtp/lib.rs.html#10-185' title='goto source code'>[src]</a></span></h1>
+<div class='docblock'>
+<h1 id="rust-smtp-client" class='section-header'><a
+                           href="#rust-smtp-client">Rust SMTP client</a></h1>
+<p>This client should tend to follow <a href="https://tools.ietf.org/html/rfc5321">RFC 5321</a>, but is still
+a work in progress. It is designed to efficiently send emails from a rust application to a
+relay email server.</p>
+
+<p>It implements the following extensions:</p>
+
+<ul>
+<li>8BITMIME (<a href="https://tools.ietf.org/html/rfc6152">RFC 6152</a>)</li>
+<li>AUTH (<a href="http://tools.ietf.org/html/rfc4954">RFC 4954</a>)</li>
+</ul>
+
+<p>It will eventually implement the following extensions:</p>
+
+<ul>
+<li>STARTTLS (<a href="http://tools.ietf.org/html/rfc2487">RFC 2487</a>)</li>
+<li>SMTPUTF8 (<a href="http://tools.ietf.org/html/rfc6531">RFC 6531</a>)</li>
+</ul>
+
+<h2 id="architecture" class='section-header'><a
+                           href="#architecture">Architecture</a></h2>
+<p>This client is divided into three parts:</p>
+
+<ul>
+<li>client: a low level SMTP client providing all SMTP commands</li>
+<li>sender: a high level SMTP client providing an easy method to send emails</li>
+<li>mailer: generates the email to be sent with the sender</li>
+</ul>
+
+<h2 id="usage" class='section-header'><a
+                           href="#usage">Usage</a></h2>
+<h3 id="simple-example" class='section-header'><a
+                           href="#simple-example">Simple example</a></h3>
+<p>This is the most basic example of usage:</p>
+<pre class='rust rust-example-rendered'>
+<span class='kw'>use</span> <span class='ident'>smtp</span>::<span class='ident'>sender</span>::{<span class='ident'>Sender</span>, <span class='ident'>SenderBuilder</span>};
+<span class='kw'>use</span> <span class='ident'>smtp</span>::<span class='ident'>mailer</span>::<span class='ident'>EmailBuilder</span>;
+
+<span class='comment'>// Create an email</span>
+<span class='kw'>let</span> <span class='ident'>email</span> <span class='op'>=</span> <span class='ident'>EmailBuilder</span>::<span class='ident'>new</span>()
+    <span class='comment'>// Addresses can be specified by the couple (email, alias)</span>
+    .<span class='ident'>to</span>((<span class='string'>&quot;user@example.org&quot;</span>, <span class='string'>&quot;Firstname Lastname&quot;</span>))
+    <span class='comment'>// ... or by an address only</span>
+    .<span class='ident'>from</span>(<span class='string'>&quot;user@example.com&quot;</span>)
+    .<span class='ident'>subject</span>(<span class='string'>&quot;Hi, Hello world&quot;</span>)
+    .<span class='ident'>body</span>(<span class='string'>&quot;Hello world.&quot;</span>)
+    .<span class='ident'>build</span>();
+
+<span class='comment'>// Open a local connection on port 25</span>
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>sender</span> <span class='op'>=</span> <span class='ident'>SenderBuilder</span>::<span class='ident'>localhost</span>().<span class='ident'>build</span>();
+<span class='comment'>// Send the email</span>
+<span class='kw'>let</span> <span class='ident'>result</span> <span class='op'>=</span> <span class='ident'>sender</span>.<span class='ident'>send</span>(<span class='ident'>email</span>);
+
+<span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>result</span>.<span class='ident'>is_ok</span>());
+</pre>
+
+<h3 id="complete-example" class='section-header'><a
+                           href="#complete-example">Complete example</a></h3><pre class='rust rust-example-rendered'>
+<span class='kw'>use</span> <span class='ident'>smtp</span>::<span class='ident'>sender</span>::{<span class='ident'>Sender</span>, <span class='ident'>SenderBuilder</span>};
+<span class='kw'>use</span> <span class='ident'>smtp</span>::<span class='ident'>mailer</span>::<span class='ident'>EmailBuilder</span>;
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>builder</span> <span class='op'>=</span> <span class='ident'>EmailBuilder</span>::<span class='ident'>new</span>();
+<span class='ident'>builder</span> <span class='op'>=</span> <span class='ident'>builder</span>.<span class='ident'>to</span>((<span class='string'>&quot;user@example.org&quot;</span>, <span class='string'>&quot;Alias name&quot;</span>));
+<span class='ident'>builder</span> <span class='op'>=</span> <span class='ident'>builder</span>.<span class='ident'>cc</span>((<span class='string'>&quot;user@example.net&quot;</span>, <span class='string'>&quot;Alias name&quot;</span>));
+<span class='ident'>builder</span> <span class='op'>=</span> <span class='ident'>builder</span>.<span class='ident'>from</span>(<span class='string'>&quot;no-reply@example.com&quot;</span>);
+<span class='ident'>builder</span> <span class='op'>=</span> <span class='ident'>builder</span>.<span class='ident'>from</span>(<span class='string'>&quot;no-reply@example.eu&quot;</span>);
+<span class='ident'>builder</span> <span class='op'>=</span> <span class='ident'>builder</span>.<span class='ident'>sender</span>(<span class='string'>&quot;no-reply@example.com&quot;</span>);
+<span class='ident'>builder</span> <span class='op'>=</span> <span class='ident'>builder</span>.<span class='ident'>subject</span>(<span class='string'>&quot;Hello world&quot;</span>);
+<span class='ident'>builder</span> <span class='op'>=</span> <span class='ident'>builder</span>.<span class='ident'>body</span>(<span class='string'>&quot;Hi, Hello world.&quot;</span>);
+<span class='ident'>builder</span> <span class='op'>=</span> <span class='ident'>builder</span>.<span class='ident'>reply_to</span>(<span class='string'>&quot;contact@example.com&quot;</span>);
+<span class='ident'>builder</span> <span class='op'>=</span> <span class='ident'>builder</span>.<span class='ident'>add_header</span>((<span class='string'>&quot;X-Custom-Header&quot;</span>, <span class='string'>&quot;my header&quot;</span>));
+
+<span class='kw'>let</span> <span class='ident'>email</span> <span class='op'>=</span> <span class='ident'>builder</span>.<span class='ident'>build</span>();
+
+<span class='comment'>// Connect to a remote server on a custom port</span>
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>sender</span> <span class='op'>=</span> <span class='ident'>SenderBuilder</span>::<span class='ident'>new</span>((<span class='string'>&quot;server.tld&quot;</span>, <span class='number'>10025</span>))
+    <span class='comment'>// Set the name sent during EHLO/HELO, default is `localhost`</span>
+    .<span class='ident'>hello_name</span>(<span class='string'>&quot;my.hostname.tld&quot;</span>)
+    <span class='comment'>// Add credentials for authentication</span>
+    .<span class='ident'>credentials</span>(<span class='string'>&quot;username&quot;</span>, <span class='string'>&quot;password&quot;</span>)
+    <span class='comment'>// Enable connection reuse</span>
+    .<span class='ident'>enable_connection_reuse</span>(<span class='boolval'>true</span>).<span class='ident'>build</span>();
+
+<span class='kw'>let</span> <span class='ident'>result_1</span> <span class='op'>=</span> <span class='ident'>sender</span>.<span class='ident'>send</span>(<span class='ident'>email</span>.<span class='ident'>clone</span>());
+<span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>result_1</span>.<span class='ident'>is_ok</span>());
+
+<span class='comment'>// The second email will use the same connection</span>
+<span class='kw'>let</span> <span class='ident'>result_2</span> <span class='op'>=</span> <span class='ident'>sender</span>.<span class='ident'>send</span>(<span class='ident'>email</span>);
+<span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>result_2</span>.<span class='ident'>is_ok</span>());
+
+<span class='comment'>// Explicitely close the SMTP transaction as we enabled connection reuse</span>
+<span class='ident'>sender</span>.<span class='ident'>close</span>();
+</pre>
+
+<h3 id="using-the-client-directly" class='section-header'><a
+                           href="#using-the-client-directly">Using the client directly</a></h3>
+<p>If you just want to send an email without using <code>Email</code> to provide headers:</p>
+<pre class='rust rust-example-rendered'>
+<span class='kw'>use</span> <span class='ident'>smtp</span>::<span class='ident'>sender</span>::{<span class='ident'>Sender</span>, <span class='ident'>SenderBuilder</span>};
+<span class='kw'>use</span> <span class='ident'>smtp</span>::<span class='ident'>sendable_email</span>::<span class='ident'>SimpleSendableEmail</span>;
+
+<span class='comment'>// Create a minimal email</span>
+<span class='kw'>let</span> <span class='ident'>email</span> <span class='op'>=</span> <span class='ident'>SimpleSendableEmail</span>::<span class='ident'>new</span>(
+    <span class='string'>&quot;test@example.com&quot;</span>,
+    <span class='string'>&quot;test@example.org&quot;</span>,
+    <span class='string'>&quot;Hello world !&quot;</span>
+);
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>sender</span> <span class='op'>=</span> <span class='ident'>SenderBuilder</span>::<span class='ident'>localhost</span>().<span class='ident'>build</span>();
+<span class='kw'>let</span> <span class='ident'>result</span> <span class='op'>=</span> <span class='ident'>sender</span>.<span class='ident'>send</span>(<span class='ident'>email</span>);
+<span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>result</span>.<span class='ident'>is_ok</span>());
+</pre>
+
+<h3 id="lower-level" class='section-header'><a
+                           href="#lower-level">Lower level</a></h3>
+<p>You can also send commands, here is a simple email transaction without error handling:</p>
+<pre class='rust rust-example-rendered'>
+<span class='kw'>use</span> <span class='ident'>smtp</span>::<span class='ident'>client</span>::<span class='ident'>Client</span>;
+<span class='kw'>use</span> <span class='ident'>smtp</span>::<span class='ident'>client</span>::<span class='ident'>net</span>::<span class='ident'>SmtpStream</span>;
+<span class='kw'>use</span> <span class='ident'>smtp</span>::<span class='ident'>SMTP_PORT</span>;
+<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>net</span>::<span class='ident'>TcpStream</span>;
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>email_client</span>: <span class='ident'>Client</span><span class='op'>&lt;</span><span class='ident'>SmtpStream</span><span class='op'>&gt;</span> <span class='op'>=</span> <span class='ident'>Client</span>::<span class='ident'>new</span>((<span class='string'>&quot;localhost&quot;</span>, <span class='ident'>SMTP_PORT</span>));
+<span class='kw'>let</span> _ <span class='op'>=</span> <span class='ident'>email_client</span>.<span class='ident'>connect</span>();
+<span class='kw'>let</span> _ <span class='op'>=</span> <span class='ident'>email_client</span>.<span class='ident'>ehlo</span>(<span class='string'>&quot;my_hostname&quot;</span>);
+<span class='kw'>let</span> _ <span class='op'>=</span> <span class='ident'>email_client</span>.<span class='ident'>mail</span>(<span class='string'>&quot;user@example.com&quot;</span>, <span class='prelude-val'>None</span>);
+<span class='kw'>let</span> _ <span class='op'>=</span> <span class='ident'>email_client</span>.<span class='ident'>rcpt</span>(<span class='string'>&quot;user@example.org&quot;</span>);
+<span class='kw'>let</span> _ <span class='op'>=</span> <span class='ident'>email_client</span>.<span class='ident'>data</span>();
+<span class='kw'>let</span> _ <span class='op'>=</span> <span class='ident'>email_client</span>.<span class='ident'>message</span>(<span class='string'>&quot;Test email&quot;</span>);
+<span class='kw'>let</span> _ <span class='op'>=</span> <span class='ident'>email_client</span>.<span class='ident'>quit</span>();
+</pre>
+</div><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
+<table>
+                    <tr class=' module-item'>
+                        <td><a class='mod' href='client/index.html'
+                               title='smtp::client'>client</a></td>
+                        <td class='docblock short'>
+                             <p>SMTP client</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='mod' href='error/index.html'
+                               title='smtp::error'>error</a></td>
+                        <td class='docblock short'>
+                             <p>Error and result type for SMTP clients</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='mod' href='mailer/index.html'
+                               title='smtp::mailer'>mailer</a></td>
+                        <td class='docblock short'>
+                             <p>Simple email (very incomplete)</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='mod' href='response/index.html'
+                               title='smtp::response'>response</a></td>
+                        <td class='docblock short'>
+                             <p>SMTP response, containing a mandatory return code, and an optional text message</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='mod' href='sendable_email/index.html'
+                               title='smtp::sendable_email'>sendable_email</a></td>
+                        <td class='docblock short'>
+                             <p>SMTP sendable email</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='mod' href='sender/index.html'
+                               title='smtp::sender'>sender</a></td>
+                        <td class='docblock short'>
+                             <p>Sends an email using the client</p>
+
+                        </td>
+                    </tr>
+                </table><h2 id='statics' class='section-header'><a href="#statics">Statics</a></h2>
+<table>
+                    <tr class=' module-item'>
+                        <td><a class='static' href='static.COLON.html'
+                               title='smtp::COLON'>COLON</a></td>
+                        <td class='docblock short'>
+                             <p>Colon</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='static' href='static.CRLF.html'
+                               title='smtp::CRLF'>CRLF</a></td>
+                        <td class='docblock short'>
+                             <p>The line ending for SMTP transactions (carriage return + line feed)</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='static' href='static.MESSAGE_ENDING.html'
+                               title='smtp::MESSAGE_ENDING'>MESSAGE_ENDING</a></td>
+                        <td class='docblock short'>
+                             <p>The ending of message content</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='static' href='static.NUL.html'
+                               title='smtp::NUL'>NUL</a></td>
+                        <td class='docblock short'>
+                             <p>NUL unicode character</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='static' href='static.SMTPS_PORT.html'
+                               title='smtp::SMTPS_PORT'>SMTPS_PORT</a></td>
+                        <td class='docblock short'>
+                             <p>Default smtps port</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='static' href='static.SMTP_PORT.html'
+                               title='smtp::SMTP_PORT'>SMTP_PORT</a></td>
+                        <td class='docblock short'>
+                             <p>Default smtp port</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='static' href='static.SP.html'
+                               title='smtp::SP'>SP</a></td>
+                        <td class='docblock short'>
+                             <p>The word separator for SMTP transactions</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='static' href='static.SUBMISSION_PORT.html'
+                               title='smtp::SUBMISSION_PORT'>SUBMISSION_PORT</a></td>
+                        <td class='docblock short'>
+                             <p>Default submission port</p>
+
+                        </td>
+                    </tr>
+                </table></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <div id="help" class="hidden">
+        <div class="shortcuts">
+            <h1>Keyboard shortcuts</h1>
+            <dl>
+                <dt>?</dt>
+                <dd>Show this help dialog</dd>
+                <dt>S</dt>
+                <dd>Focus the search field</dd>
+                <dt>&larrb;</dt>
+                <dd>Move up in search results</dd>
+                <dt>&rarrb;</dt>
+                <dd>Move down in search results</dd>
+                <dt>&#9166;</dt>
+                <dd>Go to active search result</dd>
+            </dl>
+        </div>
+        <div class="infos">
+            <h1>Search tricks</h1>
+            <p>
+                Prefix searches with a type followed by a colon (e.g.
+                <code>fn:</code>) to restrict the search to a given type.
+            </p>
+            <p>
+                Accepted types are: <code>fn</code>, <code>mod</code>,
+                <code>struct</code>, <code>enum</code>,
+                <code>trait</code>, <code>typedef</code> (or
+                <code>tdef</code>).
+            </p>
+            <p>
+                Search functions by type signature (e.g.
+                <code>vec -> usize</code>)
+            </p>
+        </div>
+    </div>
+
+    
+
+    <script>
+        window.rootPath = "../";
+        window.currentCrate = "smtp";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../jquery.js"></script>
+    <script src="../main.js"></script>
+    
+    <script async src="../search-index.js"></script>
+</body>
+</html>

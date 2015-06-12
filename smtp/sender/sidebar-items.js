@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Sender","Structure that implements the high level SMTP client"],["SenderBuilder","Contains client configuration"]]});

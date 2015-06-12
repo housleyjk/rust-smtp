@@ -1,0 +1,1 @@
+initSidebarItems({"mod":[["address","Simple SMTP \"address\" (very incomplete)"],["header","Simple SMTP headers"]],"struct":[["Email","Simple email representation"],["EmailBuilder","TODO"]]});

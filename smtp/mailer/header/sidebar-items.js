@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["Header","Contains a header"]],"trait":[["ToHeader","Converts to an `Header`"]]});
