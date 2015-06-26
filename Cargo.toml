@@ -18,6 +18,10 @@ log = "*"
 rustc-serialize = "*"
 rust-crypto = "*"
 
+[dependencies.rust-crypto]                       
+version = "*"                                    
+git = "https://github.com/housleyjk/rust-crypto" 
+
 [dev-dependencies]
 env_logger = "*"
 
