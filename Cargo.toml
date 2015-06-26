@@ -16,7 +16,6 @@ time = "*"
 uuid = "*"
 log = "*"
 rustc-serialize = "*"
-rust-crypto = "*"
 
 [dependencies.rust-crypto]                       
 version = "*"                                    
